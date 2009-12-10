@@ -179,7 +179,7 @@ public class MultiInputFormat implements InputFormat
       }
 
     // attempt to get splits proportionally sized per input format
-    long[] inputSizes = getInputSizes( inputFormats, jobConfs );
+    long[] inputSizes = getInputSizes( inputFormats, jobConfs, numSplits );
     long totalSize = sum( inputSizes );
 
     if( totalSize == 0 )
@@ -231,17 +231,16 @@ public class MultiInputFormat implements InputFormat
     return inputSplits;
     }
 
-  private long[] getInputSizes( InputFormat[] inputFormats, JobConf[] jobConfs ) throws IOException
+  private long[] getInputSizes( InputFormat[] inputFormats, JobConf[] jobConfs, int numSplits ) throws IOException
     {
     long[] inputSizes = new long[inputFormats.length];
 
     for( int i = 0; i < inputFormats.length; i++ )
       {
       InputFormat inputFormat = inputFormats[ i ];
-      InputSplit[] splits = inputFormat.getSplits( jobConfs[ i ], 1 );
+      InputSplit[] splits = inputFormat.getSplits( jobConfs[ i ], numSplits);
 
-      for( InputSplit split : splits )
-        inputSizes[ i ] = inputSizes[ i ] + split.getLength();
+      inputSizes[ i ] = splits.length;
       }
 
     return inputSizes;
